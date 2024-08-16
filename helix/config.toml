@@ -1,0 +1,16 @@
+theme = "onelight"
+
+[editor]
+line-number = "relative"
+true-color = true
+# bufferline = "multiple"
+
+[editor.soft-wrap]
+enable = true
+
+[editor.lsp]
+display-messages = true
+
+[editor.statusline]
+right = ["diagnostics", "register", "position", 
+  "version-control", "file-encoding"]
