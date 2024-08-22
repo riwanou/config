@@ -9,7 +9,6 @@ local function switch_helix_scheme(scheme)
   file:close()
   -- replace theme
   local updated_data = data:gsub("theme%s*=%s*\".-\"", "theme = " .. "\"" .. scheme .. "\"")
-  wezterm.log_info("Updated helix config: " .. updated_data)
   -- refresh helix
   local _, _, _ = wezterm.run_child_process { "pkill", "-USR1", "hx" }
   -- save the new helix config
@@ -50,6 +49,9 @@ dark_mode = false
 if wezterm.gui.get_appearance():find("Dark") then
   dark_mode = true
 end
+local term_scheme, helix_scheme = get_schemes()
+config.color_scheme = term_scheme
+switch_helix_scheme(helix_scheme)
 
 config.front_end = "WebGpu"
 config.max_fps = 144
@@ -75,7 +77,50 @@ local function move_pane(key, direction)
   }
 end
 
+local session_manager = require("wezterm-session-manager/session-manager")
+wezterm.on("save_session", function(window) session_manager.save_state(window) end)
+wezterm.on("restore_session", function(window) session_manager.restore_state(window) end)
+
+-- Track loaded workspaces
+local loaded = {
+  default = true
+} 
+
 config.keys = {
+  {
+    key = "S", 
+    mods = "SUPER", 
+    action = wezterm.action.EmitEvent "save_session"
+  },
+  {
+    key = "R", 
+    mods = "SUPER", 
+    action = wezterm.action.EmitEvent "restore_session"
+  },
+  {
+    key = "P",
+    mods = "SUPER",
+    action = wezterm.action.InputSelector {
+      title = "Projects",
+      choices = {
+        { label = "default" },
+        { label = "dev" },
+        { label = "frafos" },
+      },
+      fuzzy = true,
+      action = wezterm.action_callback(function(child_window, child_pane, id, label)
+        wezterm.log_info("switching to" .. label)
+        child_window:perform_action(wezterm.action.SwitchToWorkspace {
+          name = label,
+          spawn = { cwd = label }
+        }, child_pane)
+        if not loaded[label] then
+          child_window:perform_action(wezterm.action.EmitEvent "restore_session", child_pane)
+          loaded[label] = true
+        end
+      end),
+    }
+  },
   {
     key = ".",
     mods = "SUPER",
@@ -123,6 +168,11 @@ config.keys = {
   move_pane("K", "Up"),
   move_pane("H", "Left"),
   move_pane("L", "Right"),
+  { mods = "OPT", key = "LeftArrow", action = wezterm.action.SendKey({ mods = "ALT", key = "b" }) },
+  { mods = "OPT", key = "RightArrow", action = wezterm.action.SendKey({ mods = "ALT", key = "f" }) },
+  { mods = "CMD", key = "LeftArrow", action = wezterm.action.SendKey({ mods = "CTRL", key = "a" }) },
+  { mods = "CMD", key = "RightArrow", action = wezterm.action.SendKey({ mods = "CTRL", key = "e" }) },
+  { mods = "CMD", key = "Backspace", action = wezterm.action.SendKey({ mods = "CTRL", key = "u" }) }
 }
 
 return config
