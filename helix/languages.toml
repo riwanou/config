@@ -27,11 +27,11 @@ command = "efm-langserver"
 documentFormatting = true
 
 [language-server.efm-lsp-prettier.config.languages]
-typescript = [{ formatCommand = "npx prettier --stdin-filepath ${INPUT}", formatStdin = true }]
-typescriptreact = [{ formatCommand = "npx prettier --stdin-filepath ${INPUT}", formatStdin = true }]
-# javascript = [{ formatCommand = "npx prettier --stdin-filepath ${INPUT}", formatStdin = true }]
-javascriptreact= [{ formatCommand = "npx prettier --stdin-filepath ${INPUT}", formatStdin = true }]
-svelte= [{ formatCommand = "npx prettier --stdin-filepath ${INPUT}", formatStdin = true }]
+typescript = [{ formatCommand = "prettierd --stdin-filepath ${INPUT}", formatStdin = true }]
+javascript = [{ formatCommand = "prettierd --stdin-filepath ${INPUT}", formatStdin = true }]
+typescriptreact = [{ formatCommand = "prettierd --stdin-filepath ${INPUT}", formatStdin = true }]
+javascriptreact= [{ formatCommand = "prettierd --stdin-filepath ${INPUT}", formatStdin = true }]
+svelte= [{ formatCommand = "prettierd --stdin-filepath ${INPUT}", formatStdin = true }]
 
 # - ESlint -
 
