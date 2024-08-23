@@ -55,6 +55,8 @@ switch_helix_scheme(helix_scheme)
 
 config.front_end = "WebGpu"
 config.max_fps = 144
+config.enable_scroll_bar = true
+config.scrollback_lines = 42000000
 
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
 config.window_padding = {
